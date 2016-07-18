@@ -17,9 +17,8 @@
 # USA
 
 import logging
-from setuptools import setup
 from setuptools.extension import Extension
-from setuptools import find_packages
+from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
 import sys
 
@@ -35,7 +34,7 @@ except (IOError, ImportError, OSError):
 
 # setuptools DWIM monkey-patch madness: http://dou.bz/37m3XL
 # https://pypi.python.org/pypi/setuptools_cython/
-if 'setuptools.extension' in sys.modules:
+if sys.version_info.major == 2 and 'setuptools.extension' in sys.modules:
     m = sys.modules['setuptools.extension']
     m.Extension.__dict__ = m._Extension.__dict__
 
@@ -45,7 +44,7 @@ class PyTest(TestCommand):
 
     def initialize_options(self):
         TestCommand.initialize_options(self)
-        self.pytest_args = []
+        self.pytest_args = ["tests"]
 
     def finalize_options(self):
         TestCommand.finalize_options(self)
@@ -105,6 +104,7 @@ setup(
                       ],
     tests_require=["mock",
                    "mockextras",
+                   "psutil",
                    "pytest",
                    "pytest-cov",
                    "pytest-dbfixtures",
